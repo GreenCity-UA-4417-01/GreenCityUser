@@ -108,13 +108,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Method intercept exception {@link NotFoundException}.
+     * Handles exceptions of type {@code NotFoundException} and constructs a standardized
+     * response entity with error details.
      *
-     * @param ex      Exception witch should be intercepted.
-     * @param request contain detail about occur exception
-     * @return ResponseEntity witch contain http status and body with message of
-     *         exception.
-     * @author Marian Milian
+     * @param ex the {@code NotFoundException} that was thrown
+     * @param request the web request during which the exception was raised
+     * @return a {@code ResponseEntity} containing the error details and an HTTP status of 404 (Not Found)
      */
     @ExceptionHandler(NotFoundException.class)
     public final ResponseEntity<Object> handleNotFoundException(NotFoundException ex,
@@ -309,7 +308,9 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     private Map<String, Object> getErrorAttributes(WebRequest webRequest) {
         return new HashMap<>(errorAttributes.getErrorAttributes(webRequest,
-            ErrorAttributeOptions.of(ErrorAttributeOptions.Include.STACK_TRACE)));
+            ErrorAttributeOptions.of(
+                    ErrorAttributeOptions.Include.MESSAGE,
+                    ErrorAttributeOptions.Include.STACK_TRACE)));
     }
 
     /**
