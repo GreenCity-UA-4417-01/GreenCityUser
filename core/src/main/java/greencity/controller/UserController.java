@@ -14,6 +14,7 @@ import greencity.dto.user.*;
 import greencity.enums.EmailNotification;
 import greencity.enums.Role;
 import greencity.enums.UserStatus;
+import greencity.exception.handler.ExceptionResponse;
 import greencity.service.EmailService;
 import greencity.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -442,9 +443,27 @@ public class UserController {
     @Operation(summary = "Get User for management")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = HttpStatuses.OK),
-        @ApiResponse(responseCode = "400", description = HttpStatuses.BAD_REQUEST),
-        @ApiResponse(responseCode = "401", description = HttpStatuses.UNAUTHORIZED),
-        @ApiResponse(responseCode = "403", description = HttpStatuses.FORBIDDEN)
+            @ApiResponse(
+                    responseCode = "400",
+                    description = HttpStatuses.BAD_REQUEST,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionResponse.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = HttpStatuses.UNAUTHORIZED,
+                    content = @Content()
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = HttpStatuses.FORBIDDEN,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ExceptionResponse.class)
+                    )
+            )
     })
     @GetMapping("/findUserForManagement")
     @ApiPageable
