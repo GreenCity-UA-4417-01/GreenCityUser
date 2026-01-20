@@ -1,5 +1,4 @@
 package greencity.mapping;
-
 import greencity.dto.language.LanguageVO;
 import greencity.dto.ownsecurity.OwnSecurityVO;
 import greencity.dto.user.UserVO;
@@ -7,8 +6,6 @@ import greencity.dto.verifyemail.VerifyEmailVO;
 import greencity.entity.User;
 import org.modelmapper.AbstractConverter;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
 
 @Component
 public class UserVOMapper extends AbstractConverter<User, UserVO> {
