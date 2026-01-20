@@ -22,7 +22,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -387,7 +386,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(PropertyReferenceException.class)
     public final ResponseEntity<Object> handlePropertyReferenceException(
         PropertyReferenceException ex, WebRequest request) {
-
         ExceptionResponse exceptionResponse = new ExceptionResponse(getErrorAttributes(request));
         exceptionResponse.setMessage("Invalid sort parameter: " + ex.getPropertyName());
 
