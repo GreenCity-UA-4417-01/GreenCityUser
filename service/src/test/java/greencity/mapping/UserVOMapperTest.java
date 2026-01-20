@@ -69,24 +69,24 @@ class UserVOMapperTest {
     void convert_withNullFields_shouldHandleNulls() {
         UserVO expected = ModelUtils.getUserVOWithData();
 
-        User user= User.builder()
-                .id(expected.getId())
-                .name(expected.getName())
-                .email(expected.getEmail())
-                .role(expected.getRole())
-                .userCredo(expected.getUserCredo())
-                .emailNotification(expected.getEmailNotification())
-                .userStatus(expected.getUserStatus())
-                .rating(expected.getRating())
-                .refreshTokenKey(expected.getRefreshTokenKey())
-                .dateOfRegistration(expected.getDateOfRegistration())
-                .profilePicturePath(expected.getProfilePicturePath())
-                .city(expected.getCity())
-                .showShoppingList(expected.getShowShoppingList())
-                .showEcoPlace(expected.getShowEcoPlace())
-                .showLocation(expected.getShowLocation())
-                .lastActivityTime(expected.getLastActivityTime())
-                .build();
+        User user = User.builder()
+            .id(expected.getId())
+            .name(expected.getName())
+            .email(expected.getEmail())
+            .role(expected.getRole())
+            .userCredo(expected.getUserCredo())
+            .emailNotification(expected.getEmailNotification())
+            .userStatus(expected.getUserStatus())
+            .rating(expected.getRating())
+            .refreshTokenKey(expected.getRefreshTokenKey())
+            .dateOfRegistration(expected.getDateOfRegistration())
+            .profilePicturePath(expected.getProfilePicturePath())
+            .city(expected.getCity())
+            .showShoppingList(expected.getShowShoppingList())
+            .showEcoPlace(expected.getShowEcoPlace())
+            .showLocation(expected.getShowLocation())
+            .lastActivityTime(expected.getLastActivityTime())
+            .build();
 
         UserVO vo = mapper.convert(user);
 
