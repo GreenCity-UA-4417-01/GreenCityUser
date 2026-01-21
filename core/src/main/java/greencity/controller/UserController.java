@@ -639,8 +639,8 @@ public class UserController {
     @Operation(summary = "Update user language")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = HttpStatuses.OK),
-            @ApiResponse(responseCode = "400", description = HttpStatuses.BAD_REQUEST),
-            @ApiResponse(responseCode = "401", description = HttpStatuses.UNAUTHORIZED)
+            @ApiResponse(responseCode = "400", description = HttpStatuses.BAD_REQUEST, content = @Content),
+            @ApiResponse(responseCode = "401", description = HttpStatuses.UNAUTHORIZED, content = @Content),
     })
     @PutMapping("/language/{languageId}")
     public ResponseEntity<Object> setUserLanguage(@ApiIgnore @CurrentUser UserVO userVO,
