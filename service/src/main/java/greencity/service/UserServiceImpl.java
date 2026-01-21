@@ -162,10 +162,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserVO findByEmail(String email) {
         return modelMapper.map(
-                userRepo.findByEmail(email)
-                        .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND_BY_EMAIL)),
-                UserVO.class
-        );
+            userRepo.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.USER_NOT_FOUND_BY_EMAIL)),
+            UserVO.class);
     }
 
     /**

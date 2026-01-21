@@ -108,12 +108,13 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Handles exceptions of type {@code NotFoundException} and constructs a standardized
-     * response entity with error details.
+     * Handles exceptions of type {@code NotFoundException} and constructs a
+     * standardized response entity with error details.
      *
-     * @param ex the {@code NotFoundException} that was thrown
+     * @param ex      the {@code NotFoundException} that was thrown
      * @param request the web request during which the exception was raised
-     * @return a {@code ResponseEntity} containing the error details and an HTTP status of 404 (Not Found)
+     * @return a {@code ResponseEntity} containing the error details and an HTTP
+     *         status of 404 (Not Found)
      */
     @ExceptionHandler(NotFoundException.class)
     public final ResponseEntity<Object> handleNotFoundException(NotFoundException ex,
@@ -309,8 +310,8 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     private Map<String, Object> getErrorAttributes(WebRequest webRequest) {
         return new HashMap<>(errorAttributes.getErrorAttributes(webRequest,
             ErrorAttributeOptions.of(
-                    ErrorAttributeOptions.Include.MESSAGE,
-                    ErrorAttributeOptions.Include.STACK_TRACE)));
+                ErrorAttributeOptions.Include.MESSAGE,
+                ErrorAttributeOptions.Include.STACK_TRACE)));
     }
 
     /**
