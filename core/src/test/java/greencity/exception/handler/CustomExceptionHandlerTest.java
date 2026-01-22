@@ -1,43 +1,33 @@
 package greencity.exception.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import greencity.exception.exceptions.BadRequestException;
-import greencity.exception.exceptions.BadSocialNetworkLinksException;
-import greencity.exception.exceptions.BadUserStatusException;
-import greencity.exception.exceptions.EmailNotVerified;
-import greencity.exception.exceptions.InvalidURLException;
-import greencity.exception.exceptions.NotFoundException;
-import greencity.exception.exceptions.UserAlreadyRegisteredException;
-import greencity.exception.exceptions.WrongEmailException;
-import greencity.exception.exceptions.WrongIdException;
-import greencity.exception.exceptions.WrongPasswordException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import greencity.exception.exceptions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
+import org.springframework.data.mapping.PropertyReferenceException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartException;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CustomExceptionHandlerTest {
@@ -58,6 +48,8 @@ class CustomExceptionHandlerTest {
     FieldError fieldError;
     @Mock
     MethodArgumentNotValidException notValidException;
+    @Mock
+    PropertyReferenceException propertyReferenceException;
 
     @BeforeEach
     void init() {
@@ -227,5 +219,21 @@ class CustomExceptionHandlerTest {
         ResponseEntity.BodyBuilder status = ResponseEntity.status(HttpStatus.BAD_REQUEST);
         ResponseEntity<Object> body = status.body(multipartException.getMessage());
         assertEquals(customExceptionHandler.handleBadRequestWhenProfilePictureExceeded(multipartException), body);
+    }
+
+    @Test
+    void handlePropertyReferenceException_ShouldReturnBadRequestWithInvalidSortMessage_WhenInvalidSortParameterProvided() {
+        when(errorAttributes.getErrorAttributes(eq(webRequest),
+            any(ErrorAttributeOptions.class))).thenReturn(objectMap);
+
+        when(propertyReferenceException.getPropertyName()).thenReturn("sortBy");
+        when(propertyReferenceException.getMessage()).thenReturn("No property sortBy found");
+
+        ExceptionResponse expected = new ExceptionResponse(objectMap);
+        expected.setMessage("Invalid sort parameter: sortBy");
+
+        assertEquals(
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body(expected),
+            customExceptionHandler.handlePropertyReferenceException(propertyReferenceException, webRequest));
     }
 }
