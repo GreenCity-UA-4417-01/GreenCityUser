@@ -1,5 +1,6 @@
 package greencity.config;
 
+import greencity.config.resolvers.StrictPageableArgumentResolver;
 import greencity.converters.UserArgumentResolver;
 import greencity.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -94,6 +95,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.addFirst(new StrictPageableArgumentResolver(1, 100));
         resolvers.add(new UserArgumentResolver(userService, modelMapper));
     }
 }
