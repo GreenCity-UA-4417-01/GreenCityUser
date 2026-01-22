@@ -14,6 +14,7 @@ import greencity.dto.user.*;
 import greencity.enums.EmailNotification;
 import greencity.enums.Role;
 import greencity.enums.UserStatus;
+import greencity.exception.handler.ExceptionResponse;
 import greencity.service.EmailService;
 import greencity.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +24,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -407,12 +410,17 @@ public class UserController {
      */
     @Operation(summary = "Find current user by principal")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = HttpStatuses.OK),
-        @ApiResponse(responseCode = "400", description = HttpStatuses.BAD_REQUEST),
-        @ApiResponse(responseCode = "401", description = HttpStatuses.UNAUTHORIZED),
+        @ApiResponse(responseCode = "200", description = HttpStatuses.OK,
+            content = @Content(schema = @Schema(implementation = UserVO.class))),
+        @ApiResponse(responseCode = "400", description = HttpStatuses.BAD_REQUEST,
+            content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+        @ApiResponse(responseCode = "401", description = HttpStatuses.UNAUTHORIZED,
+            content = @Content(schema = @Schema(implementation = ExceptionResponse.class))),
+        @ApiResponse(responseCode = "404", description = HttpStatuses.NOT_FOUND,
+            content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
     @GetMapping("/findByEmail")
-    public ResponseEntity<UserVO> findByEmail(@RequestParam String email) {
+    public ResponseEntity<UserVO> findByEmail(@RequestParam @NotBlank @Email String email) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.findByEmail(email));
     }
 
