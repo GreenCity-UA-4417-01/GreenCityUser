@@ -80,9 +80,16 @@ public class EmailController {
      * Sends email notification about violation to user on email.
      *
      * @param dto {@link UserViolationMailDto} - object with all necessary data for
-     *            sending email.
+     * sending email.
      * @author Zakhar Veremchuk
      */
+    @Operation(summary = "Sends email notification about violation to user on email.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = HttpStatuses.OK),
+            @ApiResponse(responseCode = "400", description = HttpStatuses.BAD_REQUEST),
+            @ApiResponse(responseCode = "401", description = HttpStatuses.UNAUTHORIZED),
+            @ApiResponse(responseCode = "404", description = HttpStatuses.NOT_FOUND) // Добавили эту строку
+    })
     @PostMapping("/sendUserViolation")
     public ResponseEntity<Object> sendUserViolation(@RequestBody UserViolationMailDto dto) {
         emailService.sendUserViolationEmail(dto);
