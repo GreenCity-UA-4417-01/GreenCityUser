@@ -113,7 +113,7 @@ class EmailControllerTest {
     @Test
     void sendHabitNotification() throws Exception {
         String content = "{" +
-            "\"email\":\"string\"," +
+            "\"email\":\"test.email@gmail.com\"," +
             "\"name\":\"string\"" +
             "}";
 
