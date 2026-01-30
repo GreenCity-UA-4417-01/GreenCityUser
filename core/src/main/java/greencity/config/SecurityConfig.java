@@ -36,6 +36,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
  * @author Nazar Stasyuk && Yurii Koval
  * @version 1.0
  */
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalAuthentication
