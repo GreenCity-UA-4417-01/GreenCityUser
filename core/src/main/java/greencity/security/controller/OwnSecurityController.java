@@ -17,19 +17,27 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
+
 import static greencity.constant.ErrorMessage.*;
 import static greencity.constant.ValidationConstants.USER_CREATED;
 
@@ -47,6 +55,11 @@ public class OwnSecurityController {
     private final OwnSecurityService service;
     private final VerifyEmailService verifyEmailService;
     private final PasswordRecoveryService passwordRecoveryService;
+
+    @Value("${google.clientId}")
+    private String googleClientId;
+
+
 
     /**
      * Constructor.
@@ -132,6 +145,43 @@ public class OwnSecurityController {
         @ApiResponse(responseCode = "200", description = HttpStatuses.OK),
         @ApiResponse(responseCode = "400", description = NO_ANY_EMAIL_TO_VERIFY_BY_THIS_TOKEN)
     })
+
+    @GetMapping("/auth/google")
+    public void googleAuth(
+            @RequestParam(required = false) String code,
+            @RequestParam(required = false) String state,
+            @CookieValue(value = "oauth2_state", required = false) String savedState,
+            HttpServletResponse response
+    ) throws IOException {
+
+        if (code != null) {
+            response.getWriter().write("SUCCESS, code = " + code);
+            return;
+        }
+
+        String newState = UUID.randomUUID().toString();
+        Cookie stateCookie = new Cookie("oauth2_state", newState);
+        stateCookie.setHttpOnly(true);
+        stateCookie.setPath("/");
+        stateCookie.setMaxAge(300);
+        response.addCookie(stateCookie);
+
+        String redirectUrl = UriComponentsBuilder
+                .fromHttpUrl("https://accounts.google.com/o/oauth2/v2/auth")
+                .queryParam("client_id", googleClientId)
+                .queryParam("redirect_uri", "http://localhost:8060/ownSecurity/auth/google")
+                .queryParam("response_type", "code")
+                .queryParam("scope", "email profile")
+                .queryParam("state", newState)
+                .build()
+                .encode()
+                .toUriString();
+
+        response.sendRedirect(redirectUrl);
+    }
+
+
+
     @GetMapping("/verifyEmail")
     public ResponseEntity<Boolean> verify(@RequestParam @NotBlank String token,
         @RequestParam("user_id") Long userId) {
