@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(MockitoExtension.class)
 class UserVOMapperTest {
@@ -63,4 +64,35 @@ class UserVOMapperTest {
 
         assertEquals(expected, mapper.convert(userToBeConverted));
     }
+
+    @Test
+    void convert_withNullFields_shouldHandleNulls() {
+        UserVO expected = ModelUtils.getUserVOWithData();
+
+        User user = User.builder()
+            .id(expected.getId())
+            .name(expected.getName())
+            .email(expected.getEmail())
+            .role(expected.getRole())
+            .userCredo(expected.getUserCredo())
+            .emailNotification(expected.getEmailNotification())
+            .userStatus(expected.getUserStatus())
+            .rating(expected.getRating())
+            .refreshTokenKey(expected.getRefreshTokenKey())
+            .dateOfRegistration(expected.getDateOfRegistration())
+            .profilePicturePath(expected.getProfilePicturePath())
+            .city(expected.getCity())
+            .showShoppingList(expected.getShowShoppingList())
+            .showEcoPlace(expected.getShowEcoPlace())
+            .showLocation(expected.getShowLocation())
+            .lastActivityTime(expected.getLastActivityTime())
+            .build();
+
+        UserVO vo = mapper.convert(user);
+
+        assertNull(vo.getVerifyEmail());
+        assertNull(vo.getOwnSecurity());
+        assertNull(vo.getLanguageVO());
+    }
+
 }
