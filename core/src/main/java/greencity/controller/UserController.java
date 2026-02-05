@@ -635,8 +635,7 @@ public class UserController {
     public ResponseEntity<String> getUserLang(@ApiIgnore @CurrentUser UserVO userVO) {
         if (userVO.getLanguageVO().getCode() != null) {
             return ResponseEntity.status(HttpStatus.OK).body(
-                    userVO.getLanguageVO().getCode()
-            );
+                userVO.getLanguageVO().getCode());
         }
 
         return ResponseEntity.badRequest().build();
