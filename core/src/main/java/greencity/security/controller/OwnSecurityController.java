@@ -58,6 +58,8 @@ public class OwnSecurityController {
 
     @Value("${google.clientId}")
     private String googleClientId;
+    @Value("${google.redirectUri}") // Це ми щойно додали
+    private String googleRedirectUri;
 
 
 
@@ -147,21 +149,12 @@ public class OwnSecurityController {
     })
 
     @GetMapping("/auth/google")
-    public void googleAuth(
-            @RequestParam(required = false) String code,
-            @RequestParam(required = false) String state,
-            @CookieValue(value = "oauth2_state", required = false) String savedState,
-            HttpServletResponse response
-    ) throws IOException {
+    public void googleAuth(HttpServletResponse response) throws IOException {
+        String state = UUID.randomUUID().toString();
 
-        if (code != null) {
-            response.getWriter().write("SUCCESS, code = " + code);
-            return;
-        }
-
-        String newState = UUID.randomUUID().toString();
-        Cookie stateCookie = new Cookie("oauth2_state", newState);
+        Cookie stateCookie = new Cookie("oauth2_state", state);
         stateCookie.setHttpOnly(true);
+        stateCookie.setSecure(false);
         stateCookie.setPath("/");
         stateCookie.setMaxAge(300);
         response.addCookie(stateCookie);
@@ -169,10 +162,10 @@ public class OwnSecurityController {
         String redirectUrl = UriComponentsBuilder
                 .fromHttpUrl("https://accounts.google.com/o/oauth2/v2/auth")
                 .queryParam("client_id", googleClientId)
-                .queryParam("redirect_uri", "http://localhost:8060/ownSecurity/auth/google")
+                .queryParam("redirect_uri", googleRedirectUri)
                 .queryParam("response_type", "code")
                 .queryParam("scope", "email profile")
-                .queryParam("state", newState)
+                .queryParam("state", state)
                 .build()
                 .encode()
                 .toUriString();
