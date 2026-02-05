@@ -74,7 +74,21 @@ greencity.server.address = ${GREENCITY_SERVER_ADDRESS}
 
 3. If you did everything correctly, you should be able access swagger by this URL: http://localhost:8060/swagger-ui.html#/
 
-### 4.3. How to work with swagger UI in our project
+### 4.3. Configure Google OAuth (Local)
+To enable Google locally, you need to configure additional environment variables. You can add these to your IDE Run Configuration.
+
+#### Required Variables
+* `GOOGLE_CLIENT_ID`: Your Project Client ID from Google Cloud Console.
+* `GOOGLE_CLIENT_SECRET`: Your Project Client Secret (Never commit this!).
+* `GOOGLE_REDIRECT_URI`: The callback URL (e.g., `http://localhost:8060/auth/google/callback`).
+
+#### Setup Steps:
+1. Create a project in [Google Cloud Console](https://console.cloud.google.com/).
+2. Setup OAuth Consent Screen and create "Web Application" credentials.
+3. Add `http://localhost:8060/auth/google/callback` to "Authorized redirect URIs".
+4. Add the variables listed above to your environment.
+
+### 4.4. How to work with swagger UI in our project
 
 1. Run GreenCity project (look up paragraph [How to run](#42-how-to-run)).
 
@@ -94,7 +108,7 @@ greencity.server.address = ${GREENCITY_SERVER_ADDRESS}
 
 6. Now you can use swagger UI to test REST API. Some controllers require *ADMIN* role. By default, new registered users have role *USER*. To overcome this you need to update record that corresponds to your user in the local database. For example, `UPDATE users SET role = 1 WHERE id = <your_user_id>`.
 
-### 4.4. Connect with front-end
+### 4.5. Connect with front-end
 
 There is no special configurations required. Just clone [GreenCityClient](https://github.com/ita-social-projects/GreenCityClient) and run it. If you want to sign in with Google account, it's mandatory to set `google.clientId`. Read more about how to obtain [Google client id](https://developers.google.com/adwords/api/docs/guides/authentication), it's free.
 
