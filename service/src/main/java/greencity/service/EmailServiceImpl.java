@@ -296,6 +296,11 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    public void sendNotificationByEmailToUnregisteredUser(NotificationDto notification, String email) {
+        sendEmail(email, notification.getTitle(), notification.getBody());
+    }
+
+    @Override
     public void sendSuccessRestorePasswordByEmail(String email, String language, String userName, boolean isUbs) {
         Map<String, Object> model = new HashMap<>();
         String baseLink = clientLink + "/#" + (isUbs ? "/ubs" : "");

@@ -129,4 +129,25 @@ public class EmailController {
         emailService.sendNotificationByEmail(notification, email);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    /**
+     * Sends notification to **any email**, even if user is not registered.
+     *
+     * @param notification {@link NotificationDto} - object with all necessary data
+     *                     for sending notification via email.
+     * @param email        {@link String} - email of recipient.
+     */
+    @Operation(summary = "Send notification to unregistered user via email")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = HttpStatuses.OK),
+        @ApiResponse(responseCode = "400", description = HttpStatuses.BAD_REQUEST),
+        @ApiResponse(responseCode = "401", description = HttpStatuses.UNAUTHORIZED),
+        @ApiResponse(responseCode = "403", description = HttpStatuses.FORBIDDEN)
+    })
+    @PostMapping("/notification/unregistered")
+    public ResponseEntity<Object> sendNotificationToUnregisteredUser(@RequestBody NotificationDto notification,
+        @RequestParam("email") String email) {
+        emailService.sendNotificationByEmailToUnregisteredUser(notification, email);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -202,4 +202,13 @@ class EmailServiceImplTest {
         NotificationDto dto = NotificationDto.builder().title("title").body("body").build();
         assertThrows(NotFoundException.class, () -> service.sendNotificationByEmail(dto, "test@gmail.com"));
     }
+
+    @Test
+    void sendNotificationByEmailToUnregisteredUser() {
+        NotificationDto dto = NotificationDto.builder().title("title").body("body").build();
+        String email = "test@email.com";
+
+        service.sendNotificationByEmailToUnregisteredUser(dto, email);
+        verify(javaMailSender).createMimeMessage();
+    }
 }
