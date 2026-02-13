@@ -164,4 +164,23 @@ class EmailControllerTest {
         NotificationDto notification = new ObjectMapper().readValue(content, NotificationDto.class);
         verify(emailService).sendNotificationByEmail(notification, email);
     }
+
+    @Test
+    @SneakyThrows
+    void sendNotificationToUnregisteredUser() {
+        String content = "{" +
+            "\"title\":\"title\"," +
+            "\"body\":\"body\"" +
+            "}";
+        String email = "email@mail.com";
+
+        mockMvc.perform(post(LINK + "/notification/unregistered")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(content)
+            .param("email", email))
+            .andExpect(status().isOk());
+
+        NotificationDto notification = new ObjectMapper().readValue(content, NotificationDto.class);
+        verify(emailService).sendNotificationByEmailToUnregisteredUser(notification, email);
+    }
 }
