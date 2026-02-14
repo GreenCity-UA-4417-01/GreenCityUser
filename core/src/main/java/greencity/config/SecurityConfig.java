@@ -37,6 +37,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
  * @author Nazar Stasyuk && Yurii Koval
  * @version 1.0
  */
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalAuthentication
@@ -172,7 +173,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT,
                     "/ownSecurity/changePassword",
                     "/user/profile",
-                    "/user/{id}/updateUserLastActivityTime/{date}",
+                    "/user/updateUserLastActivityTime/{date}",
                     "/user/language/{languageId}",
                     "/user/employee-email")
                 .hasAnyRole(USER, ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
