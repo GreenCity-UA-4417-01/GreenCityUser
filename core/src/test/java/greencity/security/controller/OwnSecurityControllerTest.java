@@ -8,6 +8,7 @@ import greencity.security.dto.ownsecurity.OwnSignUpDto;
 import greencity.security.service.OwnSecurityService;
 import greencity.security.service.PasswordRecoveryService;
 import greencity.security.service.VerifyEmailService;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,11 +17,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.cookie;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -103,6 +110,31 @@ class OwnSecurityControllerTest {
 
         OwnSignInDto dto = ModelUtils.getObjectMapper().readValue(content, OwnSignInDto.class);
         verify(ownSecurityService).signIn(dto);
+    }
+
+    @Test
+    void googleAuthTest() throws Exception {
+        ReflectionTestUtils.setField(ownSecurityController, "googleClientId", "test-client-id");
+        ReflectionTestUtils.setField(ownSecurityController, "googleRedirectUri", "http://localhost:8060/callback");
+
+        MvcResult result = mockMvc.perform(get(LINK + "/auth/google"))
+                .andExpect(status().isFound())
+                .andExpect(cookie().exists("oauth2_state"))
+                .andExpect(cookie().httpOnly("oauth2_state", true))
+                .andReturn();
+
+        String redirectUrl = result.getResponse().getRedirectedUrl();
+        assertNotNull(redirectUrl);
+
+        assertTrue(redirectUrl.startsWith("https://accounts.google.com/o/oauth2/v2/auth"));
+        assertTrue(redirectUrl.contains("client_id=test-client-id"));
+        assertTrue(redirectUrl.contains("redirect_uri=http://localhost:8060/callback"));
+        assertTrue(redirectUrl.contains("response_type=code"));
+        assertTrue(redirectUrl.contains("scope=email%20profile"));
+
+        Cookie stateCookie = result.getResponse().getCookie("oauth2_state");
+        assertNotNull(stateCookie);
+        assertTrue(redirectUrl.contains("state=" + stateCookie.getValue()));
     }
 
     @Test
