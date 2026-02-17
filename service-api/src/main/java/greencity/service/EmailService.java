@@ -131,6 +131,15 @@ public interface EmailService {
     void sendNotificationByEmail(NotificationDto notification, String email);
 
     /**
+     * Method for send notification to email, when user doesn't exist in database.
+     *
+     * @param notification {@link NotificationDto}-includes all information about
+     *                     notification.
+     * @param email        letter is sent to this email.
+     */
+    void sendNotificationByEmailToUnregisteredUser(NotificationDto notification, String email);
+
+    /**
      * Method for send information about success restoring password.
      *
      * @param email    letter is sent to this email.

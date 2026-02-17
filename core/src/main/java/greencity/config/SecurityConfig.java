@@ -4,6 +4,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import greencity.security.filters.AccessTokenAuthenticationFilter;
+import greencity.security.filters.InternalApiKeyFilter;
 import greencity.security.jwt.JwtTool;
 import greencity.security.providers.JwtAuthenticationProvider;
 import greencity.service.UserService;
@@ -43,6 +44,7 @@ public class SecurityConfig {
     private final JwtTool jwtTool;
     private final UserService userService;
     private static final String USER_LINK = "/user";
+    private final InternalApiKeyFilter internalApiKeyFilter;
     private final AuthenticationConfiguration authenticationConfiguration;
 
     /**
@@ -51,10 +53,12 @@ public class SecurityConfig {
 
     @Autowired
     public SecurityConfig(JwtTool jwtTool, UserService userService,
-        AuthenticationConfiguration authenticationConfiguration) {
+        AuthenticationConfiguration authenticationConfiguration,
+        InternalApiKeyFilter internalApiKeyFilter) {
         this.jwtTool = jwtTool;
         this.userService = userService;
         this.authenticationConfiguration = authenticationConfiguration;
+        this.internalApiKeyFilter = internalApiKeyFilter;
     }
 
     /**
@@ -88,6 +92,7 @@ public class SecurityConfig {
         }))
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+            .addFilterBefore(internalApiKeyFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(
                 new AccessTokenAuthenticationFilter(jwtTool, authenticationManager(), userService),
                 UsernamePasswordAuthenticationFilter.class)
@@ -98,6 +103,7 @@ public class SecurityConfig {
                     SC_FORBIDDEN, "You don't have authorities.")))
             .authorizeHttpRequests(req -> req
                 .requestMatchers("/static/css/**", "/static/img/**").permitAll()
+                .requestMatchers("/error", "/error/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(
                     "/v2/api-docs/**",
@@ -117,6 +123,7 @@ public class SecurityConfig {
                     "/googleSecurity",
                     "/facebookSecurity/generateFacebookAuthorizeURL",
                     "/facebookSecurity/facebook", "/user/emailNotifications",
+                    "/facebookSecurity/facebook",
                     "/user/activatedUsersAmount",
                     "/user/{userId}/habit/assign",
                     "/token",
@@ -162,6 +169,7 @@ public class SecurityConfig {
                     "/email/changePlaceStatus",
                     "/email/general/notification")
                 .hasAnyRole(USER, ADMIN, UBS_EMPLOYEE, MODERATOR, EMPLOYEE)
+                .requestMatchers(HttpMethod.POST, "/email/notification/unregistered").permitAll()
                 .requestMatchers(HttpMethod.PUT,
                     "/ownSecurity/changePassword",
                     "/user/profile",

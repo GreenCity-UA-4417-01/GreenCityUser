@@ -138,6 +138,8 @@ class EmailServiceImplTest {
 
     @Test
     void sendHabitNotification() {
+        when(userRepo.findByEmail(anyString())).thenReturn(Optional.of(User.builder().build()));
+
         service.sendHabitNotification("userName", "userEmail");
         verify(javaMailSender).createMimeMessage();
     }
@@ -199,5 +201,14 @@ class EmailServiceImplTest {
         when(userRepo.findByEmail(anyString())).thenReturn(Optional.empty());
         NotificationDto dto = NotificationDto.builder().title("title").body("body").build();
         assertThrows(NotFoundException.class, () -> service.sendNotificationByEmail(dto, "test@gmail.com"));
+    }
+
+    @Test
+    void sendNotificationByEmailToUnregisteredUser() {
+        NotificationDto dto = NotificationDto.builder().title("title").body("body").build();
+        String email = "test@email.com";
+
+        service.sendNotificationByEmailToUnregisteredUser(dto, email);
+        verify(javaMailSender).createMimeMessage();
     }
 }
